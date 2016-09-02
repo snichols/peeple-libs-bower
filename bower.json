@@ -1,0 +1,16 @@
+{
+  "name": "peeple-libs",
+  "authors": [
+    "Stephen Nichols <snichols@therealm.io>"
+  ],
+  "description": "Public libraries for interfacing with Peeple devices and services.",
+  "license": "MIT",
+  "homepage": "http://peeple.io",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
