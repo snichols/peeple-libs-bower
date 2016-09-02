@@ -14,10 +14,14 @@ function defaultDeviceState() {
 
 var deviceState = defaultDeviceState()
 
+function setStatusText(text) {
+	deviceState.statusText = text
+	PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
+}
+
 var deviceStateURL = 'http://192.168.4.1/wifi/status'
 var createHandOffKeyURL = 'http://192.168.4.1/config/createHandOffKey'
 var resetWifiURL = 'http://192.168.4.1/wifi/reset?delay=30000'
-var appHandOffURL
 
 function updateDeviceState() {
 	makeServerRequest(deviceStateURL, function(response) {
@@ -65,16 +69,33 @@ function updateDeviceState() {
 }
 
 function doAssociateWithAccount() {
+	setStatusText('Regstering device.')
+
 	makeServerRequest(createHandOffKeyURL, function(response) {
 		if(response.success) {
 			deviceState.handOffKey = response.json.key
 			PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
 
-			appHandOffURL = 'https://my.peeple.io/#!/handoff/' + deviceState.handOffKey
+			var appHandOffURL = 'https://my.peeple.io/#!/handoff/' + response.json.key
+			setStatusText('Disconnecting from Peeple.')
 
 			makeServerRequest(resetWifiURL, function(response) {
-				window.location = appHandOffURL
+				setStatusText('Waiting for Internet connection.')
+
+				function checkForAPI() {
+					makeServerRequest('https://api.peeple.io/app/v1/time', function(response) {
+						if(response.status === 401) {
+							window.location = appHandOffURL
+						} else {
+							setTimeout(checkForAPI, 250)
+						}
+					})
+				}
+
+				checkForAPI()
 			})
+		} else {
+			setStatusText('Error.  Please reload page.')
 		}
 	})
 }
