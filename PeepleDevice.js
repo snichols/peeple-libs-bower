@@ -8,7 +8,7 @@ function defaultDeviceState() {
 		batteryLevel: null,
 		accountID: null,
 		stale: true,
-		statusText: 'Looking for device.',
+		statusText: 'Setting things up.',
 	}
 }
 
@@ -17,6 +17,7 @@ var deviceState = defaultDeviceState()
 var deviceStateURL = 'http://192.168.4.1/wifi/status'
 var createHandOffKeyURL = 'http://192.168.4.1/config/createHandOffKey'
 var resetWifiURL = 'http://192.168.4.1/wifi/reset?delay=30000'
+var appHandOffURL
 
 function updateDeviceState() {
 	makeServerRequest(deviceStateURL, function(response) {
@@ -66,15 +67,15 @@ function updateDeviceState() {
 function doAssociateWithAccount() {
 	makeServerRequest(createHandOffKeyURL, function(response) {
 		if(response.success) {
-			console.log('handOffKey:', response.json.key)
 			deviceState.handOffKey = response.json.key
 			PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
+
+			appHandOffURL = 'https://my.peeple.io/device/setup/' + deviceState.handOffKey
 
 			makeServerRequest(resetWifiURL, function(response) {
 				if(response.success) {
 					console.log('wifi reset')
-
-					// hit the app backend to finalize the handoff					
+					window.location = appHandOffURL
 				}
 			})
 		}
