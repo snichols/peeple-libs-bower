@@ -70,7 +70,7 @@ function doAssociateWithAccount() {
 			deviceState.handOffKey = response.json.key
 			PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
 
-			appHandOffURL = 'https://my.peeple.io/#/device/setup/' + deviceState.handOffKey
+			appHandOffURL = 'https://my.peeple.io/#!/handoff/' + deviceState.handOffKey
 
 			makeServerRequest(resetWifiURL, function(response) {
 				window.location = appHandOffURL
