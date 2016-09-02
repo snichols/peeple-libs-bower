@@ -20,11 +20,11 @@ var resetWifiURL = 'http://192.168.4.1/wifi/reset?delay=30000'
 
 function updateDeviceState() {
 	makeServerRequest(deviceStateURL, function(response) {
-		let wasStateStale = deviceState.stale
+		var wasStateStale = deviceState.stale
 
 		if(response.status === 200 && response.json)
 		{
-			let data = response.json
+			var data = response.json
 
 			deviceState.deviceID = data.deviceID
 
@@ -39,7 +39,7 @@ function updateDeviceState() {
 			}
 
 			if(data.voltage && data.voltage > 0) {
-				let voltage = data.voltage / 0xffff
+				var voltage = data.voltage / 0xffff
 				deviceState.batteryLevel = ((voltage / 4.57)*100)|0
 			}
 

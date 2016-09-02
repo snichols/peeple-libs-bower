@@ -1,4 +1,4 @@
-window.makeServerRequest = (url, callback) => {
+window.makeServerRequest = function(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.timeout = 10000
 
@@ -35,7 +35,7 @@ window.makeServerRequest = (url, callback) => {
 }
 
 // @TODO: SNICHOLS: optimize this
-window.computeObjectDelta = (left, right) => {
+window.computeObjectDelta = function(left, right) {
     var result
 
     left = left || {}
@@ -66,6 +66,6 @@ window.computeObjectDelta = (left, right) => {
     return result
 }
 
-window.getCurrentTime = () => {
+window.getCurrentTime = function() {
     return (Date.now()/1000)|0
 }
