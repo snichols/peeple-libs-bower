@@ -34,6 +34,20 @@ window.makeServerRequest = function(url, callback) {
     return xhr
 }
 
+window.makeServerRequestWithRetry = function(url, callback) {
+    function makeRequest() {
+        makeServerRequest(url, function(response) {
+            if(response.status === 200) {
+                callback(response)
+            } else {
+                setTimeout(250, function() { makeRequest() })
+            }
+        })
+    }
+
+    makeRequest()
+}
+
 // @TODO: SNICHOLS: optimize this
 window.computeObjectDelta = function(left, right) {
     var result

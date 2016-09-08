@@ -77,7 +77,7 @@ function updateDeviceState() {
 function doAssociateWithAccount() {
 	setStatusText('Regstering device.')
 
-	makeServerRequest(createHandOffKeyURL, function(response) {
+	makeServerRequestWithRetry(createHandOffKeyURL, function(response) {
 		if(response.success) {
 			deviceState.handOffKey = response.json.key
 			PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
@@ -85,7 +85,7 @@ function doAssociateWithAccount() {
 			var appHandOffURL = 'https://my.peeple.io/#!/handoff/' + deviceState.deviceID + '.' + response.json.key
 			setStatusText('Disconnecting from Peeple.')
 
-			makeServerRequest(resetWifiURL, function(response) {
+			makeServerRequestWithRetry(resetWifiURL, function(response) {
 				setStatusText('Waiting for Internet connection.')
 
 				function checkForAPI() {
