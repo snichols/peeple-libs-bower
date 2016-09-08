@@ -40,7 +40,7 @@ window.makeServerRequestWithRetry = function(url, callback) {
             if(response.status === 200) {
                 callback(response)
             } else {
-                setTimeout(250, function() { makeRequest() })
+                setTimeout(function() { makeRequest() }, 250)
             }
         })
     }
