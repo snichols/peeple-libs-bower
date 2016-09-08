@@ -13,6 +13,7 @@ function defaultDeviceState() {
 }
 
 var deviceState = defaultDeviceState()
+var nextStaleTime = 0
 
 function setStatusText(text) {
 	deviceState.statusText = text
@@ -49,10 +50,12 @@ function updateDeviceState() {
 			}
 
 			deviceState.stale = false
+			nextStaleTime = getCurrentTime() + 5000
 		}
 		else
 		{
-			deviceState.stale = true
+			if(getCurrentTime() >= nextStaleTime)
+				deviceState.stale = true
 		}
 
 		if(wasStateStale != deviceState.stale) {
