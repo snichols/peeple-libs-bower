@@ -13,7 +13,7 @@ function defaultDeviceState() {
 }
 
 var deviceState = defaultDeviceState()
-var nextStaleTime = 0
+var failedPingCount = 0
 
 function setStatusText(text) {
 	deviceState.statusText = text
@@ -50,12 +50,15 @@ function updateDeviceState() {
 			}
 
 			deviceState.stale = false
-			nextStaleTime = getCurrentTime() + 5000
+			failedPingCount = 0
 		}
 		else
 		{
-			if(getCurrentTime() >= nextStaleTime)
+			failedPingCount++;
+
+			if(failedPingCount >= 10) {
 				deviceState.stale = true
+			}
 		}
 
 		if(wasStateStale != deviceState.stale) {
