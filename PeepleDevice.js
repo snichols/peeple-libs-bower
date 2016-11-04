@@ -15,6 +15,23 @@ function defaultDeviceState() {
 var deviceState = defaultDeviceState()
 var lastSuccessfulPingTime = getCurrentTime()
 
+setInterval(function() {
+	var wasStateStale = deviceState.stale
+
+	var timeSinceLastPing = getCurrentTime() - lastSuccessfulPingTime	
+	deviceState.stale = timeSinceLastPing > 5000
+
+	if(wasStateStale != deviceState.stale) {
+		if(wasStateStale) {
+			app.displayToast('Connected to ' + deviceState.name)
+		} else {
+			app.displayToast('Disconnected from ' + deviceState.name)
+		}
+
+		PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
+	}
+}, 1000)
+
 function setStatusText(text) {
 	deviceState.statusText = text
 	PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
@@ -26,8 +43,6 @@ var resetWifiURL = 'http://192.168.4.1/wifi/reset?delay=30000'
 
 function updateDeviceState() {
 	makeServerRequest(deviceStateURL, function(response) {
-		var wasStateStale = deviceState.stale
-
 		if(response.status === 200 && response.json)
 		{
 			var data = response.json
@@ -49,26 +64,10 @@ function updateDeviceState() {
 				deviceState.batteryLevel = ((voltage / 4.57)*100)|0
 			}
 
-			deviceState.stale = false
 			lastSuccessfulPingTime = getCurrentTime()
-		}
-		else
-		{
-			var timeSinceLastPing = getCurrentTime() - lastSuccessfulPingTime
-
-			if(timeSinceLastPing > 5000)
-				deviceState.stale = true
+			PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
 		}
 
-		if(wasStateStale != deviceState.stale) {
-			if(wasStateStale) {
-				app.displayToast('Connected to ' + deviceState.name)
-			} else {
-				app.displayToast('Disconnected from ' + deviceState.name)
-			}
-		}
-
-		PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
 		setTimeout(updateDeviceState, 500)
 	})
 }
