@@ -56,7 +56,7 @@ function updateDeviceState() {
 		{
 			failedPingCount++;
 
-			if(failedPingCount >= 10) {
+			if(failedPingCount >= 5) {
 				deviceState.stale = true
 			}
 		}
