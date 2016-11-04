@@ -13,12 +13,13 @@ function defaultDeviceState() {
 }
 
 var deviceState = defaultDeviceState()
-var lastSuccessfulPingTime = getCurrentTime()
+var lastSuccessfulPingTime = 0
 
-setInterval(function() {
+function checkForStaleDevice() {
 	var wasStateStale = deviceState.stale
 
-	var timeSinceLastPing = getCurrentTime() - lastSuccessfulPingTime	
+	var now = Date.now()
+	var timeSinceLastPing = now - lastSuccessfulPingTime	
 	deviceState.stale = timeSinceLastPing > 5000
 
 	if(wasStateStale != deviceState.stale) {
@@ -30,7 +31,9 @@ setInterval(function() {
 
 		PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
 	}
-}, 1000)
+}
+
+setInterval(checkForStaleDevice, 500)
 
 function setStatusText(text) {
 	deviceState.statusText = text
@@ -64,7 +67,7 @@ function updateDeviceState() {
 				deviceState.batteryLevel = ((voltage / 4.57)*100)|0
 			}
 
-			lastSuccessfulPingTime = getCurrentTime()
+			lastSuccessfulPingTime = Date.now()
 			PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
 		}
 
