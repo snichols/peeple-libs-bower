@@ -103,23 +103,22 @@ function doAssociateWithAccount() {
 			PeepleEvents.sendEvent('onPeepleDeviceChanged', deviceState)
 
 			var appHandOffURL = 'https://my.peeple.io/#!/handoff/' + deviceState.deviceID + '.' + response.json.key
-			setStatusText('Disconnecting from Peeple.')
+			setStatusText('Waiting for Internet connection.')
 
 			makeServerRequestWithRetry(resetWifiURL, function(response) {
-				setStatusText('Waiting for Internet connection.')
-
-				function checkForAPI() {
-					makeServerRequest('https://api.peeple.io/app/v1/time', function(response) {
-						if(response.status === 401) {
-							window.location = appHandOffURL
-						} else {
-							setTimeout(checkForAPI, 250)
-						}
-					})
-				}
-
-				checkForAPI()
 			})
+
+			function checkForAPI() {
+				makeServerRequest('https://api.peeple.io/app/v1/time', function(response) {
+					if(response.status === 401) {
+						window.location = appHandOffURL
+					} else {
+						setTimeout(checkForAPI, 1000)
+					}
+				})
+			}
+
+			setTimeout(checkForAPI, 1000)
 		} else {
 			setStatusText('Error.  Please reload page.')
 		}
