@@ -95,7 +95,7 @@ function updateDeviceState() {
 }
 
 function doAssociateWithAccount() {
-	setStatusText('Regstering device.')
+	setStatusText('Registering device.')
 
 	makeServerRequestWithRetry(createHandOffKeyURL, function(response) {
 		if(response.success) {
