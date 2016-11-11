@@ -23,7 +23,7 @@ function checkForStaleDevice() {
 
 	var now = Date.now()
 	var timeSinceLastPing = now - lastSuccessfulPingTime	
-	deviceState.stale = timeSinceLastPing > 10000
+	deviceState.stale = deviceState.handOffKey != null || timeSinceLastPing > 10000
 
 	if(wasStateStale != deviceState.stale) {
 		if(wasStateStale) {
